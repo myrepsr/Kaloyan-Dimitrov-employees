@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 public class SelectFileFrame extends JFrame implements ActionListener {
     private JButton button;
     private DataService dataService = DataService.getInstance();
+    private CustomFileReader customFileReader;
     public SelectFileFrame(){
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new FlowLayout());
@@ -43,7 +44,7 @@ public class SelectFileFrame extends JFrame implements ActionListener {
 
             if(response == JFileChooser.APPROVE_OPTION){
                 try {
-                    CustomFileReader customFileReader = CustomFileReader.getInstance(fileChooser.getSelectedFile().getPath());
+                    customFileReader = CustomFileReader.getInstance(fileChooser.getSelectedFile().getPath());
                     dataService.setDataRecordList(customFileReader.readFile());
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);

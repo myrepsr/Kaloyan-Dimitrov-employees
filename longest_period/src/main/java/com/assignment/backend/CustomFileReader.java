@@ -13,7 +13,7 @@ public class CustomFileReader extends BufferedReader {
     private static CustomFileReader customFileReader;
     private static Reader reader;
     private static String pathToFile;
-    // "src\\Data.csv";
+    private static CustomDateTimeFormatter customDateTimeFormatter;
     public CustomFileReader(Reader in) {
         super(in);
     }
@@ -23,6 +23,7 @@ public class CustomFileReader extends BufferedReader {
             CustomFileReader.pathToFile = pathToFile;
             reader = new FileReader(pathToFile);
             customFileReader = new CustomFileReader(reader);
+            customDateTimeFormatter = new CustomDateTimeFormatter();
         }
 
         return customFileReader;
@@ -37,26 +38,31 @@ public class CustomFileReader extends BufferedReader {
 
         List<DataRecord> dataRecordList = new ArrayList<>((int) lines);
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDate dateFrom;
         LocalDate dateTo;
 
         readLine();
 
+        int i = 0;
         while((line = readLine()) != null){
             String[] row = line.split(",");
+            dateFrom = customDateTimeFormatter.parseFromStringToDate(row[2]);
+            System.out.println(i + ". " + "Date From: " + dateFrom);
 
-            dateFrom = LocalDate.parse(row[2], dateTimeFormatter);
-
-            if(row[3].equals("NULL"))
+            if(row[3].equals("NULL")) {
                 dateTo = LocalDate.now();
-            else
-                dateTo = LocalDate.parse(row[3], dateTimeFormatter);
+                System.out.println(i + ". " + "Date To: " + dateTo);
+            }
+            else {
+                dateTo = customDateTimeFormatter.parseFromStringToDate(row[3]);
+                System.out.println(i + ". " + "Date To: " + dateTo);
+            }
 
             DataRecord dataRecord = new DataRecord(Integer.parseInt(row[0]),
                     Integer.parseInt(row[1]), dateFrom, dateTo);
 
             dataRecordList.add(dataRecord);
+            i++;
         }
 
         dataRecordList.forEach(System.out::println);
